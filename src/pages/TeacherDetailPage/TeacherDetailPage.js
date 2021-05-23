@@ -28,15 +28,11 @@ const TeacherDetailPage = () => {
             name: location.state.name,
           }
         );
-        console.log(location.state.name);
-        console.log(location.state.name.length);
-        console.log(res);
         setTeacherInfo(res.data.doc);
       } else {
         const res = await axios.get(
           `http://localhost:3000/instructor/${teacherId}`
         );
-        console.log(res);
         setTeacherInfo(res.data.doc);
       }
     };

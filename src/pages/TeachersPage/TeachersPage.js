@@ -15,7 +15,7 @@ const TeachersPage = () => {
   const [shownArray, setShownArray] = useState([]);
 
   const itemCardHandler = (title) => {
-    console.log(title);
+    //console.log(title);
     history.push(`teachers/${title}`);
   };
 
@@ -31,7 +31,7 @@ const TeachersPage = () => {
   useEffect(() => {
     const fetchLectures = async () => {
       const res = await axios.get("http://localhost:3000/instructor/get_all");
-      console.log(res);
+      //console.log(res);
       setAllTeachers(res.data.lectures);
       setShownArray(res.data.lectures);
     };

@@ -17,7 +17,7 @@ const Homepage = () => {
   const [shownArray, setShownArray] = useState([]);
 
   const itemCardHandler = (title) => {
-    console.log(title);
+    //console.log(title);
     history.push(`lectures/${title}`);
   };
 
@@ -34,7 +34,7 @@ const Homepage = () => {
   useEffect(() => {
     const fetchLectures = async () => {
       const res = await axios.get("http://localhost:3000/lecture/get_all");
-      console.log(res.data.lectures);
+      //console.log(res.data.lectures);
       setAllLectures(res.data.lectures);
       setShownArray(res.data.lectures);
     };

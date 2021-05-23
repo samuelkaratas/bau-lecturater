@@ -21,7 +21,7 @@ const DetailsPage = () => {
   useEffect(() => {
     const fetchLecture = async () => {
       const res = await axios.get(`http://localhost:3000/lecture/${lectureId}`);
-      console.log(res);
+      //console.log(res);
       setLectureInfo(res.data.doc);
     };
 
