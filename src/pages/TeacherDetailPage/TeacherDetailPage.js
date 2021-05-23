@@ -22,7 +22,7 @@ const TeacherDetailPage = () => {
     //console.log(teacherId);
     const fetchLecture = async () => {
       if (location.state) {
-        const res = await axios.get(
+        const res = await axios.post(
           "http://localhost:3000/instructor/get_by_name",
           {
             name: location.state.name,
