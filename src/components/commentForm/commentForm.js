@@ -5,8 +5,8 @@ import "./commentForm.css";
 import { Button, Form, ButtonGroup, ToggleButton } from "react-bootstrap";
 
 import { Send, Star } from "react-feather";
-//import { useSelector } from "react-redux";
-//import { selectCurrentUser } from "../../redux/selectors/authSelector";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../redux/selectors/authSelector";
 import axios from "axios";
 
 const CommentForm = ({ pageId, commentForTeacher }) => {
@@ -14,7 +14,7 @@ const CommentForm = ({ pageId, commentForTeacher }) => {
   const [radioValue, setRadioValue] = useState("3");
   const [checked, setChecked] = useState(false);
 
-  //const currentUser = useSelector(selectCurrentUser);
+  const currentUser = useSelector(selectCurrentUser);
 
   const radios = [
     { name: "1", value: "1" },
@@ -74,9 +74,12 @@ const CommentForm = ({ pageId, commentForTeacher }) => {
           <Form.Label>Comment</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Your comment..."
+            placeholder={
+              currentUser ? "Your comment..." : "You need to sign in to comment"
+            }
             value={comment}
             onChange={(e) => setComment(e.target.value)}
+            disabled={currentUser ? false : true}
           />
         </Form.Group>
         <Form.Label>Rating</Form.Label>
@@ -94,6 +97,7 @@ const CommentForm = ({ pageId, commentForTeacher }) => {
               value={radio.value}
               checked={radioValue === radio.value}
               onChange={(e) => setRadioValue(e.currentTarget.value)}
+              disabled={currentUser ? false : true}
             >
               {radioValue === radio.value ? (
                 <Star
@@ -115,12 +119,17 @@ const CommentForm = ({ pageId, commentForTeacher }) => {
             label="Anonymous?"
             onChange={(e) => setChecked(e.currentTarget.checked)}
             checked={checked}
+            disabled={currentUser ? false : true}
           />
           <Form.Text className="text-muted">
             If you check this your name will be hidden.
           </Form.Text>
         </Form.Group>
-        <Button variant="success" onClick={handleSubmit}>
+        <Button
+          variant="success"
+          onClick={handleSubmit}
+          disabled={currentUser ? false : true}
+        >
           Send Comment <Send size={20} />
         </Button>
       </Form>

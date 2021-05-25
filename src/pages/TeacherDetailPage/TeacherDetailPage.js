@@ -11,12 +11,17 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../redux/selectors/authSelector";
 import axios from "axios";
 
+import CommentPagination from "../../components/pagination/pagination";
+
 const TeacherDetailPage = () => {
   const location = useLocation();
   const cuurentUser = useSelector(selectCurrentUser);
   let { teacherId } = useParams();
 
   const [teacherInfo, setTeacherInfo] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(5);
 
   useEffect(() => {
     //console.log(teacherId);
@@ -40,7 +45,16 @@ const TeacherDetailPage = () => {
     fetchLecture();
   }, []);
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   if (teacherInfo) {
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentComments = teacherInfo.comments.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
     return (
       <div className="details-container">
         <DetailsJumbotron
@@ -48,6 +62,7 @@ const TeacherDetailPage = () => {
           name={teacherInfo.name}
           shortDesc={teacherInfo.description}
           rating={teacherInfo.rating}
+          jumboForTeacher={true}
         />
         <Card style={{ width: "100vw", marginBottom: "10px" }} body>
           {teacherInfo.description}
@@ -73,12 +88,8 @@ const TeacherDetailPage = () => {
             </ListGroup.Item>
           </ListGroup>
         </Card>
-        {cuurentUser ? (
           <CommentForm pageId={teacherId} commentForTeacher={true} />
-        ) : (
-          <p>Sorry you need to sign in to comment</p>
-        )}
-        {teacherInfo.comments.map((cur) => (
+        {currentComments.map((cur) => (
           <Comment
             key={cur._id}
             username={cur.user}
@@ -87,6 +98,11 @@ const TeacherDetailPage = () => {
             isAnonymous={cur.isAnon}
           />
         ))}
+        <CommentPagination
+          postsPerPage={postsPerPage}
+          totalPosts={teacherInfo.comments.length}
+          paginate={paginate}
+        />
       </div>
     );
   } else {

@@ -11,12 +11,17 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../redux/selectors/authSelector";
 import axios from "axios";
 
+import CommentPagination from "../../components/pagination/pagination";
+
 const DetailsPage = () => {
   const location = useLocation();
   const cuurentUser = useSelector(selectCurrentUser);
   let { lectureId } = useParams();
 
   const [lectureInfo, setLectureInfo] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchLecture = async () => {
@@ -28,7 +33,16 @@ const DetailsPage = () => {
     fetchLecture();
   }, []);
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   if (lectureInfo) {
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentComments = lectureInfo.comments.slice(
+      indexOfFirstPost,
+      indexOfLastPost
+    );
+
     return (
       <div className="details-container">
         <DetailsJumbotron
@@ -36,6 +50,7 @@ const DetailsPage = () => {
           shortDesc={lectureInfo.shortDescription}
           rating={lectureInfo.rating}
           name={`${lectureId} - ${lectureInfo.name}`}
+          jumboForTeacher={false}
         />
         <Card style={{ width: "100vw", marginBottom: "10px" }} body>
           {lectureInfo.description}
@@ -68,12 +83,8 @@ const DetailsPage = () => {
             <ListGroup.Item>Semester: {lectureInfo.semester}</ListGroup.Item>
           </ListGroup>
         </Card>
-        {cuurentUser ? (
-          <CommentForm pageId={lectureId} commentForTeacher={false} />
-        ) : (
-          <p>Sorry you need to sign in to comment</p>
-        )}
-        {lectureInfo.comments.map((cur) => (
+        <CommentForm pageId={lectureId} commentForTeacher={false} />
+        {currentComments.map((cur) => (
           <Comment
             key={cur._id}
             username={cur.user}
@@ -82,6 +93,11 @@ const DetailsPage = () => {
             isAnonymous={cur.isAnon}
           />
         ))}
+        <CommentPagination
+          postsPerPage={postsPerPage}
+          totalPosts={lectureInfo.comments.length}
+          paginate={paginate}
+        />
       </div>
     );
   } else {
